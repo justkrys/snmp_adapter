@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[dev-packages]
+bumpversion = "*"
+wheel = "*"
+watchdog = "*"
+flake8 = "*"
+tox = "*"
+coverage = "*"
+pytest = "*"
+pytest-runner = "*"
+PyInstaller = "*"
+Sphinx = "*"
+twine = "*"
+black = "==20.8b1"
+isort = "*"
+mypy = "*"
+pytest-cov = "*"
+
+[packages]
+snmp_adapter = {path = ".", editable = true}
+click = "*"
