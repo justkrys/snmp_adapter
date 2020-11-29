@@ -41,13 +41,29 @@ def default(args=None):
 @main.command()
 def quickstart():
     """PySNMP Quick Start Example"""
-    return snmp_adapter.quickstart()
+    snmp_adapter.quickstart()
+    return 0
 
 
 @main.command()
 def common():
     """PySNMP Tutorial Common Operations Example"""
-    return snmp_adapter.common()
+    snmp_adapter.common()
+    return 0
+
+
+@main.command()
+def temperature():
+    """One-Wire Temperature sensor on ControlByWeb X-410 module."""
+    snmp_adapter.temperature()
+    return 0
+
+
+@main.command()
+def rewrite():
+    """PySNMP Tutorial Common Operations Example, rewritten."""
+    snmp_adapter.rewrite()
+    return 0
 
 
 if __name__ == "__main__":
