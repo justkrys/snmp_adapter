@@ -2,7 +2,12 @@
 
 """Main module."""
 
+import asyncio
+
 from pysnmp import hlapi
+from pysnmp.entity import engine, config
+from pysnmp.carrier.asyncio.dgram import udp
+from pysnmp.entity.rfc3413 import ntfrcv
 
 
 def _make_object(*id_parts):
@@ -136,3 +141,45 @@ def rewrite():
     command = _make_get("192.168.0.59", "public", sysDescr, sysUpTime, ifInOctets)
     results = _run_command(command)
     _print_results(results)
+
+
+def _listen_callback(
+    snmp_engine,
+    state_reference,
+    context_engine_id,
+    context_name,
+    var_binds,
+    callback_context,
+):
+    transport_domain, transport_address = snmp_engine.msgAndPduDsp.getTransportInfo(
+        state_reference
+    )
+    print(
+        f"Notification from {transport_address}, "
+        f"SNMP Engine {context_engine_id.prettyPrint()}, "
+        f"Context {context_name.prettyPrint()}"
+    )
+    for name, value in var_binds:
+        print(f"{name.prettyPrint()} = {value.prettyPrint()}")
+
+
+def listen(address="0.0.0.0", port=162, community="public"):
+    """Listen to and SNMP trap and print events."""
+    # Based on pySNMP example code.
+    loop = asyncio.get_event_loop()
+    snmp_engine = engine.SnmpEngine()
+    print(f"Agent is listening SNMP Trap on {address}, Port: {port}")
+    if port < 1024:
+        print(
+            "WARNING: Port < 1024. Root priviledges or authbind required on *nix systems."
+        )
+    print("-" * 79)
+    config.addTransport(
+        snmp_engine,
+        udp.domainName + (1,),
+        udp.UdpTransport().openServerMode((address, port)),
+    )
+    config.addV1System(snmp_engine, community, community)
+    ntfrcv.NotificationReceiver(snmp_engine, _listen_callback)
+    print("Press CTRL-C to quit.")
+    loop.run_forever()

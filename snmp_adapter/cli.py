@@ -66,5 +66,34 @@ def rewrite():
     return 0
 
 
+@main.command()
+@click.option(
+    "-a",
+    "--address",
+    default="0.0.0.0",
+    show_default=True,
+    help="Interface IP address on which to listen.",
+)
+@click.option(
+    "-p",
+    "--port",
+    default=162,
+    show_default=True,
+    type=int,
+    help="Port on which to listen.",
+)
+@click.option(
+    "-c",
+    "--community",
+    default="public",
+    show_default=True,
+    help="SNMP v1/v2 community to which to listen.",
+)
+def listen(address, port, community):
+    """Listen to and SNMP trap and print events."""
+    snmp_adapter.listen(address, port, community)
+    return 0
+
+
 if __name__ == "__main__":
     sys.exit(main())  # pragma: no cover
