@@ -70,14 +70,14 @@ def rewrite():
 @click.option(
     "-a",
     "--address",
-    default="0.0.0.0",
+    default=snmp_adapter.DEFAULT_ADDRESSS,
     show_default=True,
     help="Interface IP address on which to listen.",
 )
 @click.option(
     "-p",
     "--port",
-    default=162,
+    default=snmp_adapter.DEFAULT_PORT,
     show_default=True,
     type=int,
     help="Port on which to listen.",
@@ -85,13 +85,21 @@ def rewrite():
 @click.option(
     "-c",
     "--community",
-    default="public",
+    default=snmp_adapter.DEFAULT_COMMUNITY,
     show_default=True,
     help="SNMP v1/v2 community to which to listen.",
 )
-def listen(address, port, community):
+@click.option(
+    "-m",
+    "--mib",
+    "mibs",
+    multiple=True,
+    nargs=1,
+    help="Load extra SNMP MIB(s) for nicer output.  Use multiple times to add multiple MIBs.",
+)
+def listen(address, port, community, mibs):
     """Listen to and SNMP trap and print events."""
-    snmp_adapter.listen(address, port, community)
+    snmp_adapter.listen(address, port, community, snmp_adapter.DEFAULT_MIBS + mibs)
     return 0
 
 

@@ -8,6 +8,14 @@ from pysnmp import hlapi
 from pysnmp.entity import engine, config
 from pysnmp.carrier.asyncio.dgram import udp
 from pysnmp.entity.rfc3413 import ntfrcv
+from pysnmp.smi import builder, compiler, view, rfc1902
+
+DEFAULT_ADDRESSS = "0.0.0.0"
+DEFAULT_PORT = 162
+DEFAULT_COMMUNITY = "public"
+DEFAULT_MIBS = ("SNMPv2-MIB", "IF-MIB", "XYTRONIX-MIB")  # Must be a tuple not a list.
+
+_view_controller = None
 
 
 def _make_object(*id_parts):
@@ -155,17 +163,29 @@ def _listen_callback(
         state_reference
     )
     print(
-        f"Notification from {transport_address}, "
+        f"\nNotification from {transport_address}, "
         f"SNMP Engine {context_engine_id.prettyPrint()}, "
         f"Context {context_name.prettyPrint()}"
     )
-    for name, value in var_binds:
-        print(f"{name.prettyPrint()} = {value.prettyPrint()}")
+    for oid, value in var_binds:
+        name = rfc1902.ObjectIdentity(oid.prettyPrint())
+        name.resolveWithMib(_view_controller)
+        print(f"    {name.prettyPrint()} ({oid.prettyPrint()}) = {value.prettyPrint()}")
 
 
-def listen(address="0.0.0.0", port=162, community="public"):
+def listen(
+    address=DEFAULT_ADDRESSS,
+    port=DEFAULT_PORT,
+    community=DEFAULT_COMMUNITY,
+    mibs=DEFAULT_MIBS,
+):
     """Listen to and SNMP trap and print events."""
     # Based on pySNMP example code.
+    mib_builder = builder.MibBuilder()
+    compiler.addMibCompiler(mib_builder)
+    mib_builder.loadModules(*mibs)
+    global _view_controller
+    _view_controller = view.MibViewController(mib_builder)
     loop = asyncio.get_event_loop()
     snmp_engine = engine.SnmpEngine()
     print(f"Agent is listening SNMP Trap on {address}, Port: {port}")
