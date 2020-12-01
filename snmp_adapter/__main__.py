@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from snmp_adapter.experiments import snmp
+from snmp_adapter.experiments import snmp, xml
 
 
 class AliasedGroup(click.Group):
@@ -100,6 +100,18 @@ def rewrite():
 def listen(address, port, community, mibs):
     """Listen to and SNMP trap and print events."""
     snmp.listen(address, port, community, snmp.DEFAULT_MIBS + mibs)
+    return 0
+
+
+@main.command()
+@click.argument(
+    "text",
+    nargs=-1,
+)
+def words(text):
+    """Output text as an XML document of individual words."""
+    text = " ".join(text) if text else 'We are the knights who say "NI"!'
+    xml.words(text)
     return 0
 
 

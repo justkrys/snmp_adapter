@@ -21,8 +21,9 @@ pytest-cov = "*"
 bandit = "*"
 
 [packages]
-snmp_adapter = {path = ".", editable = true}
+snmp_adapter = {editable = true, path = "."}
 click = "*"
 pysnmp = "*"
 psycopg2 = "*"
 sqlalchemy = "*"
+yattag = "*"
