@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from snmp_adapter.experiments import snmp, xml
+from snmp_adapter.experiments import snmp, xml, db
 
 
 class AliasedGroup(click.Group):
@@ -112,6 +112,18 @@ def words(text):
     """Output text as an XML document of individual words."""
     text = " ".join(text) if text else 'We are the knights who say "NI"!'
     xml.words(text)
+    return 0
+
+
+@main.command()
+@click.argument(
+    "text",
+    nargs=-1,
+)
+def sqlite(text):
+    """Add the text as an XML document to an sqlite3 database."""
+    text = " ".join(text) if text else 'We are the knights who say "NI"!'
+    db.sqlite(text)
     return 0
 
 
