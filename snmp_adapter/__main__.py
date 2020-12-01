@@ -127,5 +127,17 @@ def sqlite(text):
     return 0
 
 
+@main.command()
+@click.argument(
+    "text",
+    nargs=-1,
+)
+def litealchemy(text):
+    """Add the text as an XML document to an sqlite3 database."""
+    text = " ".join(text) if text else 'We are the knights who say "NI"!'
+    db.litealchemy(text)
+    return 0
+
+
 if __name__ == "__main__":
     sys.exit(main())  # pragma: no cover

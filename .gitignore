@@ -105,4 +105,4 @@ ENV/
 .mypy_cache/
 
 #Project-spcific ignores
-words.db
+words?.db
