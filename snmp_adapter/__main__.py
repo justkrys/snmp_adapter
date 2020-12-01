@@ -8,6 +8,7 @@ import click
 from snmp_adapter.experiments import snmp, xml, db
 
 
+# From Click documentation
 class AliasedGroup(click.Group):
     def get_command(self, ctx, cmd_name):
         rv = click.Group.get_command(self, ctx, cmd_name)
@@ -21,52 +22,68 @@ class AliasedGroup(click.Group):
         ctx.fail("Too many matches: %s" % ", ".join(sorted(matches)))
 
 
-@click.group(cls=AliasedGroup, invoke_without_command=True, chain=True)
-@click.pass_context
-def main(ctx):
-    if ctx.invoked_subcommand is None:
-        default()
+# @click.group(cls=AliasedGroup, invoke_without_command=True)
+# @click.pass_context
+# def main(ctx):
+#     if ctx.invoked_subcommand is None:
+#         default()
+#     pass
 
 
-@main.command()
-def default(args=None):
-    """Console script for snmp_adapter."""
-    click.echo(
-        "Replace this message by putting your code into " "snmp_adapter.cli.main"
-    )
-    click.echo("See click documentation at http://click.pocoo.org/")
-    return 0
+@click.group(cls=AliasedGroup)
+def main():
+    pass
 
 
-@main.command()
+# @main.command(hidden=True)
+# def default():
+#     """Console script for snmp_adapter."""
+#     click.echo(
+#         "Replace this message by putting your code into " "snmp_adapter.cli.main"
+#     )
+#     click.echo("See click documentation at http://click.pocoo.org/")
+#     return 0
+
+
+# ----------------------------------------------------------------------------
+
+
+@main.group(
+    "snmp", cls=AliasedGroup, chain=True, help="Experiments with SNMP protocol."
+)
+def snmp_group():
+    pass
+
+
+@snmp_group.command()
 def quickstart():
     """PySNMP Quick Start Example"""
     snmp.quickstart()
     return 0
 
 
-@main.command()
+@snmp_group.command()
 def common():
     """PySNMP Tutorial Common Operations Example"""
     snmp.common()
     return 0
 
 
-@main.command()
+@snmp_group.command()
 def temperature():
     """One-Wire Temperature sensor on ControlByWeb X-410 module."""
     snmp.temperature()
     return 0
 
 
-@main.command()
+@snmp_group.command()
 def rewrite():
     """PySNMP Tutorial Common Operations Example, rewritten."""
     snmp.rewrite()
     return 0
 
 
-@main.command()
+@snmp_group.command()
 @click.option(
     "-a",
     "--address",
@@ -103,7 +120,15 @@ def listen(address, port, community, mibs):
     return 0
 
 
-@main.command()
+# ----------------------------------------------------------------------------
+
+
+@main.group("xml", cls=AliasedGroup, chain=True, help="Experiments with XML.")
+def xml_group():
+    pass
+
+
+@xml_group.command()
 @click.argument(
     "text",
     nargs=-1,
@@ -115,7 +140,15 @@ def words(text):
     return 0
 
 
-@main.command()
+# ----------------------------------------------------------------------------
+
+
+@main.group("db", cls=AliasedGroup, chain=True, help="Experiments with databases.")
+def db_group():
+    pass
+
+
+@db_group.command()
 @click.argument(
     "text",
     nargs=-1,
@@ -127,7 +160,7 @@ def sqlite(text):
     return 0
 
 
-@main.command()
+@db_group.command()
 @click.argument(
     "text",
     nargs=-1,
