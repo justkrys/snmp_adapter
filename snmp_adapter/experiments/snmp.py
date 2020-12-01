@@ -3,6 +3,7 @@
 """Main module."""
 
 import asyncio
+import warnings
 
 from pysnmp import hlapi
 from pysnmp.entity import engine, config
@@ -89,6 +90,25 @@ def _print_results(results):
     _print_values(_extract_values(results))
 
 
+def _old_print_results(command):
+    """Prints the results of snmp commands and/or any related errors. (Deprecated)"""
+    warnings.warn("Deprecated.", DeprecationWarning)
+    errorIndication, errorStatus, errorIndex, varBinds = next(command)
+    if errorIndication:
+        print(errorIndication)
+    elif errorStatus:
+        print(
+            "%s at %s"
+            % (
+                errorStatus.prettyPrint(),
+                errorIndex and varBinds[int(errorIndex) - 1][0] or "?",
+            )
+        )
+    else:
+        for varBind in varBinds:
+            print(" = ".join([x.prettyPrint() for x in varBind]))
+
+
 def quickstart():
     """PySNMP Quick Start Example"""
     iterator = hlapi.getCmd(
@@ -130,7 +150,7 @@ def common():
     command = hlapi.getCmd(
         engine, community, target, context, sysDescr, sysUpTime, ifInOctets
     )
-    _print_results(command)
+    _old_print_results(command)
 
 
 def temperature():

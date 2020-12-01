@@ -5,7 +5,7 @@ import sys
 
 import click
 
-from snmp_adapter import snmp_adapter
+from snmp_adapter.experiments import snmp
 
 
 class AliasedGroup(click.Group):
@@ -41,28 +41,28 @@ def default(args=None):
 @main.command()
 def quickstart():
     """PySNMP Quick Start Example"""
-    snmp_adapter.quickstart()
+    snmp.quickstart()
     return 0
 
 
 @main.command()
 def common():
     """PySNMP Tutorial Common Operations Example"""
-    snmp_adapter.common()
+    snmp.common()
     return 0
 
 
 @main.command()
 def temperature():
     """One-Wire Temperature sensor on ControlByWeb X-410 module."""
-    snmp_adapter.temperature()
+    snmp.temperature()
     return 0
 
 
 @main.command()
 def rewrite():
     """PySNMP Tutorial Common Operations Example, rewritten."""
-    snmp_adapter.rewrite()
+    snmp.rewrite()
     return 0
 
 
@@ -70,14 +70,14 @@ def rewrite():
 @click.option(
     "-a",
     "--address",
-    default=snmp_adapter.DEFAULT_ADDRESSS,
+    default=snmp.DEFAULT_ADDRESSS,
     show_default=True,
     help="Interface IP address on which to listen.",
 )
 @click.option(
     "-p",
     "--port",
-    default=snmp_adapter.DEFAULT_PORT,
+    default=snmp.DEFAULT_PORT,
     show_default=True,
     type=int,
     help="Port on which to listen.",
@@ -85,7 +85,7 @@ def rewrite():
 @click.option(
     "-c",
     "--community",
-    default=snmp_adapter.DEFAULT_COMMUNITY,
+    default=snmp.DEFAULT_COMMUNITY,
     show_default=True,
     help="SNMP v1/v2 community to which to listen.",
 )
@@ -99,7 +99,7 @@ def rewrite():
 )
 def listen(address, port, community, mibs):
     """Listen to and SNMP trap and print events."""
-    snmp_adapter.listen(address, port, community, snmp_adapter.DEFAULT_MIBS + mibs)
+    snmp.listen(address, port, community, snmp.DEFAULT_MIBS + mibs)
     return 0
 
 
