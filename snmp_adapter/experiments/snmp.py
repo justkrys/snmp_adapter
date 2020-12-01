@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Main module."""
+"""SNMP Experiments."""
 
 import asyncio
 import warnings
