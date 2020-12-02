@@ -184,5 +184,17 @@ def ormlite(text):
     return 0
 
 
+@db_group.command()
+@click.argument(
+    "text",
+    nargs=-1,
+)
+def pgorm(text):
+    """Add the text as an XML document to a PostgreSQL database."""
+    text = " ".join(text) if text else 'We are the knights who say "NI"!'
+    db.pgorm(text)
+    return 0
+
+
 if __name__ == "__main__":
     sys.exit(main())  # pragma: no cover

@@ -21,7 +21,7 @@ class MyMixin:
     """Mixin class to give ORM objects a nicer default presentation."""
 
     def _asdict(self):
-        """Returns a dictionary containing all column names and values."""
+        """Returns a dictionary copy containing all column names and values."""
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
     def keys(self):
@@ -112,15 +112,17 @@ def litealchemy(text):
         print(row)
 
 
-def ormlite(text):
-    """Create/Append an sqlite db with the output of the xml.words().
+def _orm_common(engine, text):
+    """Create/Append to a db table with the output of the xml.words().
 
-    Uses sqlalchemy ORM language with sqlite3.
+    Uses sqlalchemy ORM language.
+    This is all the database-independent code.
+    It does not matter what DB you use for this stuff.
 
     """
     # I started getting quite fancy with this example.
     # The classes include lots of unnecessary, but nice, extras.
-    engine = sa.create_engine("sqlite:///words3.db")
+
     # Automatically checks for existing tables before create.
     Base.metadata.create_all(engine)
     Session = orm.sessionmaker(bind=engine)
@@ -131,3 +133,25 @@ def ormlite(text):
     results = session.query(Words).all()
     for row in results:
         print(row)
+
+
+def ormlite(text):
+    """Create/Append an sqlite db with the output of the xml.words().
+
+    Uses sqlalchemy ORM language with sqlite3.
+
+    """
+    engine = sa.create_engine("sqlite:///words3.db")
+    _orm_common(engine, text)
+
+
+def pgorm(text):
+    """Create/Append to an PostgreSQL table with the output of the xml.words().
+
+    Uses sqlalchemy ORM language with PostgreSQL.
+
+    """
+    # Uses psycopg2 implicitly
+    # Using a local unix domain connection, not TCP.  No passowrd needed. :)
+    engine = sa.create_engine("postgresql://krys@/krys")
+    _orm_common(engine, text)
